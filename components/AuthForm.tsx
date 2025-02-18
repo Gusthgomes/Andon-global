@@ -48,7 +48,7 @@ const AuthForm = <T extends FieldValues>({ type, schema, defaultValues, onSubmit
     return (
         <div className='flex flex-col gap-4'>
             <h1 className='text-2xl font-semibold text-white'>
-                {isSignIn ? "Bem vindo de volta ao Andon AMF!" : "Crie sua conta no Andon AMF!"}
+                {isSignIn ? "Bem vindo de volta ao Andon Global!" : "Crie sua conta no Andon!"}
             </h1>
             <p className='text-light-100'>
                 {isSignIn ? "Acesse e fique por dentro de como está a produção em tempo real!" : "Preencha todos os campos com dados válidos para ter acesso ao Andon."}
