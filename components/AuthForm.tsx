@@ -42,7 +42,24 @@ const AuthForm = <T extends FieldValues>({ type, schema, defaultValues, onSubmit
     });
 
     const handleSubmit: SubmitHandler<T> = async (data) => {
+        const result = await onSubmit(data) ?? { success: false, error: "Erro desconhecido" };
 
+        if (result.success) {
+            toast({
+                title: "Sucesso!",
+                description: isSignIn
+                    ? "Você logou com sucesso!"
+                    : "Sua conta foi criada com sucesso!",
+            });
+
+            router.push("/");
+        } else {
+            toast({
+                title: `Error ${isSignIn ? "signing in" : "signing up"}`,
+                description: result.error ?? "Ops! Algo deu errado!",
+                variant: "destructive",
+            });
+        }
     };
 
     return (
