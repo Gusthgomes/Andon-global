@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Andon Global",
+  title: "Andon AMF",
   description: "Gerenciador de todas as linhas de produção",
 };
 
