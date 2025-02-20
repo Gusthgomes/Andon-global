@@ -5,17 +5,16 @@ import {
   doc,
   setDoc,
 } from "@/configs/firebaseConfig";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 export const registerUser = async ({
   email,
   password,
   fullName,
-  role,
 }: {
   email: string;
   password: string;
   fullName: string;
-  role: string;
 }) => {
   const userCredential = await createUserWithEmailAndPassword(
     auth,
@@ -27,9 +26,30 @@ export const registerUser = async ({
   await setDoc(doc(db, "users", user.uid), {
     email,
     fullName,
-    role,
+    role: "COMMON",
     createdAt: new Date(),
   });
 
   return { success: true };
+};
+
+export const loginUser = async ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) => {
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    const user = userCredential.user;
+
+    return { success: true, user };
+  } catch (error: string | any) {
+    return { success: false, message: error.message };
+  }
 };
