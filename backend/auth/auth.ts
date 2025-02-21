@@ -7,6 +7,12 @@ import {
 } from "@/configs/firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
+// convex
+import { ConvexClient } from "convex/browser";
+import { api } from "@/convex/_generated/api";
+
+const convex = new ConvexClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+
 export const registerUser = async ({
   email,
   password,
@@ -16,21 +22,41 @@ export const registerUser = async ({
   password: string;
   fullName: string;
 }) => {
-  const userCredential = await createUserWithEmailAndPassword(
-    auth,
-    email,
-    password
-  );
-  const user = userCredential.user;
+  try {
+    // Criar usuário no Firebase
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    const user = userCredential.user;
+    console.log("Usuário criado no Firebase:", user.uid);
 
-  await setDoc(doc(db, "users", user.uid), {
-    email,
-    fullName,
-    role: "COMMON",
-    createdAt: new Date(),
-  });
+    // Salvar no Firestore (opcional)
+    await setDoc(doc(db, "users", user.uid), {
+      email,
+      fullName,
+      role: "COMMON",
+      createdAt: new Date(),
+    });
 
-  return { success: true };
+    console.log("Usuário salvo no Firestore");
+
+    // 🔥 Chamar a mutation do Convex corretamente
+    await convex.mutation(api.users.saveUser, {
+      uid: user.uid,
+      email,
+      fullName,
+      role: "COMMON",
+    });
+
+    console.log("Usuário salvo no Convex com sucesso!");
+
+    return { success: true };
+  } catch (error: any) {
+    console.error("Erro no registro:", error.message);
+    return { success: false, message: error.message };
+  }
 };
 
 export const loginUser = async ({
