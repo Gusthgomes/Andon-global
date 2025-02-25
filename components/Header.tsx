@@ -13,8 +13,12 @@ import SideMenu from "./SideMenu";
 import { ThemeToggle } from "./ui/theme/theme-toggle";
 import Link from "next/link";
 
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
 const Header = () => {
     const [userEmail, setUserEmail] = useState<string | null>(null);
+    const [userUid, setUserUid] = useState<string | null>(null);
     const router = useRouter();
 
     useEffect(() => {
@@ -28,6 +32,10 @@ const Header = () => {
 
         return () => unsubscribe();
     }, [router]);
+
+    const userData = useQuery(api.users.getUserByUid, userUid ? { uid: userUid } : "skip");
+
+    console.log(userData, "role do usuário");
 
     const signOutUser = async () => {
         try {
@@ -44,14 +52,14 @@ const Header = () => {
             <CardContent className="p-5 justify-between flex flex-row  items-center">
                 <div className="flex items-center gap-3">
                     <Link href="/">
-                        <Ticket size={30} />
+                        <Ticket size={30} className="text-orange-600" />
                     </Link>
                     <h1 className="font-bold text-xl font-mono">
                         Tickets AMF
                     </h1>
                 </div>
                 <div className="flex items-center justify-between gap-2">
-                    {userEmail ? <p className="text-md font-semibold">Olá {userEmail}</p> : <p>Carregando...</p>}
+                    {userEmail ? <p className="text-md font-semibold">Olá {userEmail} {userData?.role}</p> : <p>Carregando...</p>}
 
                     <ThemeToggle />
 

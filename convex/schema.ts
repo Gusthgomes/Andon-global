@@ -8,7 +8,7 @@ export default defineSchema({
     email: v.string(),
     role: v.optional(v.string()),
     createdAt: v.number(),
-  }),
+  }).index("by_uid", ["uid"]),
 
   tickets: defineTable({
     number: v.string(),
