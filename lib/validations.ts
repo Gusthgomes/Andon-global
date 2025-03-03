@@ -34,7 +34,7 @@ const ticketitem = z.array(
 );
 
 export const ticketschema = z.object({
-  ticket: z
+  number: z
     .string()
     .min(3, "Este campo deve ter no mínimo 3 caracteres")
     .max(6, "Este campo deve ter no máximo 6 caracteres"),

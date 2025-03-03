@@ -1,16 +1,8 @@
-import { defineSchema, defineTable } from "convex/server";
+import { mutation } from "./_generated/server";
 import { v } from "convex/values";
 
-export default defineSchema({
-  users: defineTable({
-    uid: v.string(),
-    fullName: v.string(),
-    email: v.string(),
-    role: v.optional(v.string()),
-    createdAt: v.number(),
-  }).index("by_uid", ["uid"]),
-
-  tickets: defineTable({
+export const createTicket = mutation({
+  args: {
     number: v.string(),
     motivo: v.string(),
     posto: v.string(),
@@ -28,5 +20,8 @@ export default defineSchema({
         description: v.string(),
       })
     ),
-  }),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("tickets", args);
+  },
 });

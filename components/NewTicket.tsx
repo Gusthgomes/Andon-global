@@ -1,6 +1,12 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from "react";
+
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/configs/firebaseConfig";
 
 import { Input } from './ui/input';
 import { Button } from './ui/button';
@@ -21,10 +27,28 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ticketschema } from '@/lib/validations';
 import { Minus, Plus } from 'lucide-react';
 
+import { useRouter } from "next/navigation";
+
 type formData = z.infer<typeof ticketschema>;
 
 
 const NewTicket = () => {
+
+    const [userUid, setUserUid] = useState<string | null>(null);
+
+    const router = useRouter();
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                router.push("/sign-in");
+            } else {
+                setUserUid(user.uid);
+            }
+        });
+
+        return () => unsubscribe();
+    }, [router]);
 
     const {
         handleSubmit,
@@ -42,10 +66,35 @@ const NewTicket = () => {
         control,
     });
 
-    const onSubmit = (data: formData) => {
-        console.log(data);
-        reset();
+    const createTicket = useMutation(api.tickets.createTicket);
+
+    const onSubmit = async (data: FormData) => {
+        try {
+            console.log("Enviando:", data); // 🔍 Debug para verificar os dados
+
+            await createTicket({
+                number: data.number,
+                kit: data.kit,
+                area: data.area,
+                line: data.line,
+                posto: data.posto,
+                motivo: data.motivo,
+                ticketItem: data.ticketItem,
+                status: "Aberto",
+                createdAt: Date.now(),
+                updatedAt: Date.now(),
+                userId: userUid || "",
+            });
+
+            reset();
+            alert("Ticket cadastrado com sucesso!");
+        } catch (error) {
+            console.error("Erro ao criar ticket:", error);
+            alert("Erro ao cadastrar ticket.");
+        }
     };
+
+
     return (
         <>
             <div className="flex flex-col items-center justify-center gap-3">
@@ -60,7 +109,7 @@ const NewTicket = () => {
                             <div className="flex flex-col gap-2">
                                 <div>
                                     <Input
-                                        {...register("ticket")}
+                                        {...register("number")}
                                         type="text"
                                         placeholder='204344'
                                         maxLength={7}
@@ -72,7 +121,7 @@ const NewTicket = () => {
                                     name="kit"
                                     control={control}
                                     render={({ field }) => (
-                                        <Select onValueChange={field.onChange} value={field.value}>
+                                        <Select onValueChange={field.onChange} value={field.value || ""}>
                                             <SelectTrigger className="w-full">
                                                 <SelectValue placeholder="KIT" />
                                             </SelectTrigger>
@@ -98,7 +147,7 @@ const NewTicket = () => {
                                     name="area"
                                     control={control}
                                     render={({ field }) => (
-                                        <Select onValueChange={field.onChange} value={field.value}>
+                                        <Select onValueChange={field.onChange} value={field.value || ""}>
                                             <SelectTrigger className="w-full">
                                                 <SelectValue placeholder="Área" />
                                             </SelectTrigger>
@@ -119,7 +168,7 @@ const NewTicket = () => {
                                     name="line"
                                     control={control}
                                     render={({ field }) => (
-                                        <Select onValueChange={field.onChange} value={field.value}>
+                                        <Select onValueChange={field.onChange} value={field.value || ""}>
                                             <SelectTrigger className="w-full">
                                                 <SelectValue placeholder="Modelo" />
                                             </SelectTrigger>
@@ -151,7 +200,7 @@ const NewTicket = () => {
                                     name="posto"
                                     control={control}
                                     render={({ field }) => (
-                                        <Select onValueChange={field.onChange} value={field.value}>
+                                        <Select onValueChange={field.onChange} value={field.value || ""}>
                                             <SelectTrigger className="w-full">
                                                 <SelectValue placeholder="Posto" />
                                             </SelectTrigger>
@@ -190,7 +239,7 @@ const NewTicket = () => {
                                     name="motivo"
                                     control={control}
                                     render={({ field }) => (
-                                        <Select onValueChange={field.onChange} value={field.value}>
+                                        <Select onValueChange={field.onChange} value={field.value || ""}>
                                             <SelectTrigger className="w-full">
                                                 <SelectValue placeholder="Motivo" />
                                             </SelectTrigger>
