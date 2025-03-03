@@ -45,3 +45,5 @@ export const ticketschema = z.object({
   motivo: z.string().min(1, "Area é obrigatório"),
   ticketItem: ticketitem,
 });
+
+export type TicketFormData = z.infer<typeof ticketschema>;

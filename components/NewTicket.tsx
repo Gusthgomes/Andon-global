@@ -20,11 +20,13 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
+import { toast } from "@/hooks/use-toast";
+
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { ticketschema } from '@/lib/validations';
+import { ticketschema, TicketFormData } from '@/lib/validations';
 import { Minus, Plus } from 'lucide-react';
 
 import { useRouter } from "next/navigation";
@@ -68,9 +70,8 @@ const NewTicket = () => {
 
     const createTicket = useMutation(api.tickets.createTicket);
 
-    const onSubmit = async (data: FormData) => {
+    const onSubmit = async (data: TicketFormData) => {
         try {
-            console.log("Enviando:", data); // 🔍 Debug para verificar os dados
 
             await createTicket({
                 number: data.number,
@@ -87,10 +88,16 @@ const NewTicket = () => {
             });
 
             reset();
-            alert("Ticket cadastrado com sucesso!");
-        } catch (error) {
+            toast({
+                title: "Sucesso!",
+                description: "Ticket cadastrado com sucesso!",
+            });
+        } catch (error: string | any) {
             console.error("Erro ao criar ticket:", error);
-            alert("Erro ao cadastrar ticket.");
+            toast({
+                title: "Erro ao cadastrar ticket!",
+                variant: "destructive",
+            });
         }
     };
 
