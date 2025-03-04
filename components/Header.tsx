@@ -1,46 +1,31 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
+
 import { auth } from "@/configs/firebaseConfig";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
+
 import { useRouter } from "next/navigation";
-import { Button } from "./ui/button";
-import { LogOut, MenuIcon, Ticket } from "lucide-react";
+import Link from "next/link";
+
 import { Card, CardContent } from "./ui/card";
+import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+
+import { LogOut, MenuIcon, Ticket } from "lucide-react";
+
 import SideMenu from "./SideMenu";
 
 import { ThemeToggle } from "./ui/theme/theme-toggle";
-import Link from "next/link";
 
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
+
+import { useAuth } from "./context/AuthContext";
 
 const Header = () => {
-    const [userEmail, setUserEmail] = useState<string | null>(null);
-    const [userUid, setUserUid] = useState<string | null>(null);
+
     const router = useRouter();
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                router.push("/sign-in");
-            } else {
-                setUserEmail(user.email);
-                setUserUid(user.uid);
-            }
-        });
-
-        return () => unsubscribe();
-    }, [router]);
-
-
-
-    const userData = useQuery(
-        api.users.getUserByUid,
-        userUid ? { uid: userUid } : "skip"
-    );
-
+    const { user, userData } = useAuth();
 
     const signOutUser = async () => {
         try {
@@ -65,7 +50,7 @@ const Header = () => {
                 </div>
                 <div className="flex items-center justify-between gap-2">
                     <p className="text-md font-semibold">
-                        Olá {userEmail}{" "}
+                        Olá {user?.email ?? "Visitante"}{" "}
                         {userData === undefined
                             ? "Carregando..."
                             : userData
