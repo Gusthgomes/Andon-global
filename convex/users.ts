@@ -23,8 +23,6 @@ export const saveUser = mutation({
 export const getUserByUid = query({
   args: { uid: v.string() },
   handler: async ({ db }, { uid }) => {
-    if (!uid) return null;
-
     return await db
       .query("users")
       .withIndex("by_uid", (q) => q.eq("uid", uid))

@@ -42,3 +42,27 @@ export const getUserTicketsById = query(
       .take(25);
   }
 );
+
+// delete ticket by id
+export const deleteTicketById = mutation({
+  args: { ticketId: v.id("tickets"), userId: v.string() },
+  handler: async ({ db }, { ticketId, userId }) => {
+    // get ticket by id
+    const ticket = await db.get(ticketId);
+
+    // check if ticket exists
+    if (!ticket) {
+      throw new Error("Ticket não encontrado");
+    }
+
+    // check if user is the owner of the ticket
+    if (ticket.userId !== userId) {
+      throw new Error("Você não tem permissão para deletar esse ticket");
+    }
+
+    // delete ticket
+    await db.delete(ticketId);
+
+    return { success: true };
+  },
+});
