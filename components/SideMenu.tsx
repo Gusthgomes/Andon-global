@@ -1,7 +1,7 @@
 import React from 'react'
 import { SheetClose, SheetHeader, SheetTitle } from './ui/sheet'
 import Link from 'next/link'
-import { HomeIcon, TicketPlus } from 'lucide-react'
+import { HomeIcon, LogIn, TicketPlus } from 'lucide-react'
 import { Button } from './ui/button'
 
 const SideMenu = () => {
@@ -20,6 +20,18 @@ const SideMenu = () => {
                         >
                             <HomeIcon size={18} className="mr-2" />
                             Início
+                        </Button>
+                    </Link>
+                </SheetClose>
+
+                <SheetClose asChild>
+                    <Link href="/sign-in">
+                        <Button
+                            variant="outline"
+                            className="w-full items-start justify-start"
+                        >
+                            <LogIn size={18} className="mr-2" />
+                            Login
                         </Button>
                     </Link>
                 </SheetClose>
