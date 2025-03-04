@@ -284,7 +284,7 @@ const NewTicket = () => {
                                                 />
 
                                                 {errors?.ticketItem && (
-                                                    <p className="p-0 m-0 text-[0.50rem] font-semibold text-white">
+                                                    <p className="p-0 m-0 text-[0.50rem] font-semibold">
                                                         {errors.ticketItem[index]?.item?.message}
                                                     </p>
                                                 )}
@@ -297,7 +297,7 @@ const NewTicket = () => {
                                                     placeholder="1"
                                                 />
                                                 {errors?.ticketItem && (
-                                                    <p className="p-0 text-[0.50rem] font-semibold text-white">
+                                                    <p className="p-0 text-[0.50rem] font-semibold">
                                                         {errors.ticketItem[index]?.quantity?.message}
                                                     </p>
                                                 )}
@@ -310,7 +310,7 @@ const NewTicket = () => {
                                                     placeholder="Rabicho 1,5m..."
                                                 />
                                                 {errors?.ticketItem && (
-                                                    <p className="m-0 p-0 text-[0.50rem] font-semibold text-white">
+                                                    <p className="m-0 p-0 text-[0.50rem] font-semibold">
                                                         {errors.ticketItem[index]?.description?.message}
                                                     </p>
                                                 )}
