@@ -41,7 +41,7 @@ const TicketItem: React.FC<TicketItemProps> = ({ ticket }) => {
 
     return (
         <>
-            <Card className="relative font-semibold w-full p-1 border-2 rounded-md bg-white">
+            <Card className="relative font-semibold w-full p-1 border-2 rounded-md">
                 <CardHeader className='p-2'>
                     <CardTitle>{ticket.number}</CardTitle>
 
