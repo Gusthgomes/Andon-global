@@ -19,7 +19,7 @@ import SideMenu from "./SideMenu";
 import { ThemeToggle } from "./ui/theme/theme-toggle";
 
 
-import { useAuth } from "./context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 
 const Header = () => {
 
