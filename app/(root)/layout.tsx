@@ -1,4 +1,4 @@
-import { AuthProvider } from '@/components/context/AuthContext'
+import { AuthProvider } from '@/context/AuthContext'
 import Header from '@/components/Header'
 import React, { ReactNode } from 'react'
 
