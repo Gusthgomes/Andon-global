@@ -28,5 +28,5 @@ export default defineSchema({
         description: v.string(),
       })
     ),
-  }),
+  }).index("by_userId", ["userId"]),
 });
