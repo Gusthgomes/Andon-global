@@ -1,9 +1,12 @@
 "use client";
 
 import React from "react";
+
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+
 import { useAuth } from "@/context/AuthContext";
+
 import TicketItem from "./TicketItem";
 
 const MyTickets = () => {
