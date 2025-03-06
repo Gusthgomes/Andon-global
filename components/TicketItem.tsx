@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react'
+import React, { useState } from 'react'
 
 import { TicketItemProps } from '@/types'
 
@@ -8,8 +8,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/
 import { Badge } from './ui/badge';
 import { Separator } from './ui/separator';
 import { Button } from './ui/button';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "./ui/alert-dialog";
 
-import { Check, Trash } from 'lucide-react';
+import { Check, Loader2, Trash } from 'lucide-react';
 
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -21,22 +31,39 @@ import { api } from "@/convex/_generated/api";
 
 import { useAuth } from "@/context/AuthContext";
 
+import { toast } from '@/hooks/use-toast';
+
 const TicketItem: React.FC<TicketItemProps> = ({ ticket }) => {
 
+    const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+    const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+
     const pathname = usePathname();
+
     const { user } = useAuth();
+
     const deleteTicket = useMutation(api.tickets.deleteTicketById);
 
     const handleDelete = async () => {
-        if (confirm("Tem certeza que deseja excluir este ticket?")) {
-            try {
-                // @ts-ignore
-                await deleteTicket({ ticketId: ticket._id, userId: user?.uid });
-                alert("Ticket deletado com sucesso!");
-            } catch (error: string | any) {
-                alert(error.message);
-            }
+        try {
+            setIsDeleteLoading(true);
+            // @ts-ignore
+            await deleteTicket({ ticketId: ticket._id, userId: user?.uid });
+            toast({
+                title: "Ticket deletado com sucesso!",
+            });
+        } catch (error: string | any) {
+            toast({
+                title: "Ops!",
+                description:
+                    "Ocorreu um erro ao deletar o ticket. Por favor, tente novamente.",
+                variant: "destructive",
+            });
+        } finally {
+            setIsDeleteLoading(false);
+            setIsConfirmDialogOpen(false);
         }
+
     };
 
     return (
@@ -97,12 +124,44 @@ const TicketItem: React.FC<TicketItemProps> = ({ ticket }) => {
 
                 <div className="flex items-center gap-2">
                     {pathname === "/myTickets" && (
-                        <Button size="icon" className='absolute top-2 right-2' onClick={handleDelete}>
+                        <Button size="icon" className='absolute top-2 right-2' onClick={() => setIsConfirmDialogOpen(true)}>
                             <Trash size={20} />
                         </Button>
                     )}
                 </div>
             </Card>
+
+            <AlertDialog
+                open={isConfirmDialogOpen}
+                onOpenChange={setIsConfirmDialogOpen}
+            >
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>
+                            Deseja realmente deletar esse ticket?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Essa ação não poderá ser desfeita.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel className=" bg-red-500" id="cancel_test">
+                            Cancelar
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            disabled={isDeleteLoading}
+                            onClick={handleDelete}
+                            className=" bg-green-500"
+                            id="confirm_test"
+                        >
+                            {isDeleteLoading && (
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            )}
+                            Continuar
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </>
     )
 }
