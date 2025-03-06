@@ -66,3 +66,24 @@ export const deleteTicketById = mutation({
     return { success: true };
   },
 });
+
+// update ticket
+export const updateTicket = mutation({
+  args: {
+    ticketId: v.id("tickets"),
+    motivo: v.string(),
+    status: v.string(),
+  },
+  handler: async ({ db }, { ticketId, motivo, status }) => {
+    const ticket = await db.get(ticketId);
+    if (!ticket) {
+      throw new Error("Ticket não encontrado");
+    }
+
+    await db.patch(ticketId, {
+      motivo,
+      status,
+      updatedAt: Date.now(),
+    });
+  },
+});
