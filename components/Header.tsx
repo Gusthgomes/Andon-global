@@ -5,7 +5,7 @@ import React from "react";
 import { auth } from "@/configs/firebaseConfig";
 import { signOut } from "firebase/auth";
 
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 
 import { Card, CardContent } from "./ui/card";
@@ -23,14 +23,12 @@ import { useAuth } from "../context/AuthContext";
 
 const Header = () => {
 
-    const router = useRouter();
-
     const { user, userData } = useAuth();
 
     const signOutUser = async () => {
         try {
             await signOut(auth);
-            router.push("/sign-in");
+            redirect("/sign-in");
             return { success: true };
         } catch (error: string | any) {
             return { success: false, message: error.message };
