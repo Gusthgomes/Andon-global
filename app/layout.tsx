@@ -11,6 +11,8 @@ import ConvexClientProvider from "@/providers/ConvexClientProvider";
 
 import ClientOnly from "@/components/ClientOnly";
 
+import { AuthProvider } from '@/context/AuthContext'
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -37,17 +39,19 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ConvexClientProvider>
-          <ClientOnly>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="light"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <main>{children}</main>
-              <Toaster />
-            </ThemeProvider>
-          </ClientOnly>
+          <AuthProvider>
+            <ClientOnly>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="light"
+                enableSystem
+                disableTransitionOnChange
+              >
+                <main>{children}</main>
+                <Toaster />
+              </ThemeProvider>
+            </ClientOnly>
+          </AuthProvider>
         </ConvexClientProvider>
       </body>
     </html>
